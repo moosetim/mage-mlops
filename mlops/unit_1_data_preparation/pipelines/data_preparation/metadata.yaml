@@ -7,9 +7,9 @@ blocks:
   downstream_blocks:
   - ingest_unit_1_time_series_line_chart_w6
   - ingest_unit_1_time_series_bar_chart_g3
+  - prepare_unit_1
   - missing_values_for_ingest_unit_1
   - unique_values_for_ingest_unit_1
-  - most_frequent_values_for_ingest_unit_1
   - summary_overview_for_ingest_unit_1
   - feature_profiles_for_ingest_unit_1
   executor_config: null
@@ -23,6 +23,44 @@ blocks:
   type: data_loader
   upstream_blocks: []
   uuid: ingest_unit_1
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: unit_1_data_preparation/transformers/prepare_unit_1.py
+  downstream_blocks:
+  - prepare_unit_1_histogram_o7
+  - build_unit_1
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Prepare Unit 1
+  retry_config: null
+  status: executed
+  timeout: null
+  type: transformer
+  upstream_blocks:
+  - ingest_unit_1
+  uuid: prepare_unit_1
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: unit_1_data_preparation/data_exporters/build_unit_1.py
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Build Unit 1
+  retry_config: null
+  status: executed
+  timeout: null
+  type: data_exporter
+  upstream_blocks:
+  - prepare_unit_1
+  uuid: build_unit_1
 cache_block_output_in_memory: false
 callbacks: []
 concurrency_config: {}
@@ -46,6 +84,10 @@ spark_config: {}
 tags: []
 type: python
 uuid: data_preparation
+variables:
+  split_on_feature: lpep_pickup_datetime
+  split_on_feature_value: '2024-02-01'
+  target: duration
 variables_dir: /home/src/mage_data/unit_1_data_preparation
 widgets:
 - all_upstream_blocks_executed: true
@@ -141,27 +183,6 @@ widgets:
   configuration:
     chart_type: table
     height: 3000
-    index: column_index
-    x: columns
-    y: rows
-  downstream_blocks: []
-  executor_config: null
-  executor_type: local_python
-  has_callback: false
-  language: python
-  name: most frequent values for ingest_unit_1
-  retry_config: null
-  status: executed
-  timeout: null
-  type: chart
-  upstream_blocks:
-  - ingest_unit_1
-  uuid: most_frequent_values_for_ingest_unit_1
-- all_upstream_blocks_executed: true
-  color: null
-  configuration:
-    chart_type: table
-    height: 3000
     index: stats
     x: headers
     y: rows
@@ -199,3 +220,24 @@ widgets:
   upstream_blocks:
   - ingest_unit_1
   uuid: feature_profiles_for_ingest_unit_1
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    buckets: '19'
+    chart_type: histogram
+    group_by:
+    - trip_distance
+    x: x
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: prepare_unit_1_histogram_o7
+  retry_config: null
+  status: executed
+  timeout: null
+  type: chart
+  upstream_blocks:
+  - prepare_unit_1
+  uuid: prepare_unit_1_histogram_o7
